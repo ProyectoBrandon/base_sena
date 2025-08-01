@@ -1,0 +1,115 @@
+create database if not exists Proyecto;
+
+use Proyecto;
+
+
+CREATE TABLE Administrador(
+id_administrador int primary key auto_increment,
+Tipo_documento enum('Cedula de ciudadania', 'Tarjeta de identidad'),
+Numero_documento_administrador int,
+Contrasena varchar(16)
+);
+
+
+CREATE TABLE Ficha(
+id_ficha int primary key auto_increment,
+Inicio_ficha date,
+Fin_ficha date,
+Centro_de_formacion enum('Centro de servicios financieros', 'Centro de tecnologias de transporte', 'Centro metaltecnico'),
+Numero_de_ficha int,
+Contenido_ficha text
+);
+
+CREATE TABLE Administrador_ficha(
+id_administradorficha int primary key auto_increment,
+id_administrador int,
+id_ficha int,
+foreign key (id_administrador) references Administrador(id_administrador),
+foreign key (id_ficha) references Ficha (id_ficha)
+);
+
+
+CREATE TABLE Instructor (
+id_instructor int primary key auto_increment,
+Rol enum('Aprendiz', 'Estudiante'),
+Contrasena varchar(16),
+Tipo_documento enum('Cedula de ciudadania', 'Pasaporte', 'Cedula de extranjeria'),
+Numero_documento_instructor int
+);
+
+CREATE TABLE Ficha_instructor(
+id_fichainstructor int primary key auto_increment,
+id_instructor int,
+id_ficha int,
+foreign key (id_instructor) references Instructor(id_instructor),
+foreign key (id_ficha) references Ficha(id_ficha)
+);
+
+CREATE TABLE Aprendiz (
+id_aprendiz int primary key auto_increment,
+id_ficha int,
+estado_aprendiz enum('Activo', 'Decersion', 'Inactivo'),
+Tipo_documento enum('Cedula de ciudadania', 'Pasaporte', 'Cedula de extranjeria', 'PPT'),
+Rol enum('Aprendiz', 'Instructor'),
+Contrasena varchar(16),
+Numero_documento_aprendiz int,
+foreign key (id_ficha) references Ficha(id_ficha)
+);
+
+CREATE TABLE Foro (
+id_foro int primary key auto_increment,
+id_ficha int,
+Titulo varchar(200),
+Descripcion_problema text,
+foreign key (id_ficha) references Ficha(id_ficha)
+);
+
+CREATE TABLE Actividades(
+id_actividad int primary key auto_increment,
+id_instructor int,
+fecha_creacion date,
+Titulo varchar(200),
+Descripcion text,
+Plazo_entrega datetime,
+Estado enum('Entregado', 'Rechazado'),
+foreign key (id_instructor) references Instructor(id_instructor)
+);
+
+
+CREATE TABLE Entrega (
+id_entrega int primary key auto_increment,
+id_aprendiz int,
+id_actividad int,
+Fecha_entrega datetime,
+Comentario text,
+Nota decimal,
+Documento_envio mediumblob,
+foreign key (id_aprendiz) references Aprendiz(id_aprendiz),
+foreign key (id_actividad) references Actividades(id_actividad)
+);
+
+CREATE TABLE Calendario (
+id_calendario int primary key auto_increment,
+id_aprendiz int,
+id_actividad int,
+Dias_num tinyint,
+Hoy_num datetime,
+Dia_text  varchar(15),
+Ano year,
+Mes varchar(15),
+Hora time,
+foreign key (id_aprendiz) references Aprendiz(id_aprendiz),
+foreign key (id_actividad) references Actividades(id_actividad) 
+);
+
+CREATE TABLE QR (
+id_qr int primary key auto_increment,
+id_aprendiz int,
+id_instructor int,
+Fecha_asistencia datetime,
+Imagen_qr varchar(255),
+Tiempo_uso date,
+Hora_generacion time,
+foreign key (id_aprendiz) references Aprendiz(id_aprendiz),
+foreign key (id_instructor) references Instructor(id_instructor)
+);
